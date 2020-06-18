@@ -12,6 +12,8 @@
 
 #### Removed
 
+- Do not install deprecated mdx binary anymore (#274, @gpetiot)
+
 #### Fixed
 
 - Report `#require` directive errors (#276, @gpetiot)
