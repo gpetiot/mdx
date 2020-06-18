@@ -641,6 +641,8 @@ let in_env e f =
     try Hashtbl.find envs env_name with Not_found -> env_deps !default_env
   in
   load_env env names objs;
+  Clflags.real_paths := false;
+  Toploop.set_paths ();
   let res = f () in
   let env = !Toploop.toplevel_env in
   let env, names, objs = env_deps env in
