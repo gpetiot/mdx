@@ -1,1 +1,4 @@
-[mdx] Fatal error: File "test-case.md", line 3: invalid code block: `toto` is not a valid label.
+ocaml-mdx: FILE argument: File "test-case.md", line 3: invalid code block:
+           `toto` is not a valid label.
+Usage: ocaml-mdx test [OPTION]... FILE
+Try `ocaml-mdx test --help' or `ocaml-mdx --help' for more information.

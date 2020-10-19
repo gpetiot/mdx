@@ -10,10 +10,14 @@ let non_deterministic =
     (fun x -> `Non_deterministic x)
     Arg.(value & flag & info [ "non-deterministic"; "n" ] ~env ~doc)
 
+let r_syntax = ref None
+
 let syntax =
   let parse s =
     match Mdx.Syntax.of_string s with
-    | Some syntax -> `Ok syntax
+    | Some syntax ->
+        r_syntax := Some syntax;
+        `Ok syntax
     | None -> `Error (Format.sprintf "unrecognized syntax %S" s)
   in
   let syntax = (parse, Mdx.Syntax.pp) in
@@ -26,12 +30,49 @@ let syntax =
 
 let file_docv = "FILE"
 
+let r_file = ref []
+
+let file_conv =
+  let check_file, fmt = Arg.non_dir_file in
+  let check_file x =
+    match check_file x with
+    | `Ok s -> (
+        let syntax = Option.value !r_syntax ~default:Normal in
+        let file_contents, lexbuf = Mdx.Misc.init x in
+        match Mdx.parse_lexbuf file_contents syntax lexbuf with
+        | Ok items ->
+            r_file := items;
+            `Ok s
+        | Error (`Msg e) -> `Error e )
+    | `Error e -> `Error e
+  in
+  (check_file, fmt)
+
 let file =
   let doc = "The file to use." in
   named
     (fun x -> `File x)
-    Arg.(
-      required & pos 0 (some non_dir_file) None & info [] ~doc ~docv:file_docv)
+    Arg.(required & pos 0 (some file_conv) None & info [] ~doc ~docv:file_docv)
+
+let section_conv =
+  let check_section, fmt = Arg.string in
+  let check_section x =
+    match check_section x with
+    | `Ok s ->
+        let items = !r_file in
+        let section_re = Re.Perl.compile_pat x in
+        if
+          List.exists
+            (function
+              | Mdx.Document.Text _ -> false
+              | Mdx.Document.Section (_, s) -> Re.execp section_re s
+              | Mdx.Document.Block _ -> false)
+            items
+        then `Ok s
+        else `Error (Format.sprintf "%s is not a valid section" x)
+    | `Error e -> `Error e
+  in
+  (check_section, fmt)
 
 let section =
   let doc =
@@ -41,7 +82,9 @@ let section =
   named
     (fun x -> `Section x)
     Arg.(
-      value & opt (some string) None & info [ "section"; "s" ] ~doc ~docv:"PAT")
+      value
+      & opt (some section_conv) None
+      & info [ "section"; "s" ] ~doc ~docv:"PAT")
 
 let silent_eval =
   let doc = "Do not show the result of evaluating toplevel phrases." in

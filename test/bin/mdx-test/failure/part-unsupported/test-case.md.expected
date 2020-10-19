@@ -1,1 +1,4 @@
-[mdx] Fatal error: File "test-case.md", lines 3-5: invalid code block: `part` label is not allowed for non-OCaml include blocks.
+ocaml-mdx: FILE argument: File "test-case.md", lines 3-5: invalid code block:
+           `part` label is not allowed for non-OCaml include blocks.
+Usage: ocaml-mdx test [OPTION]... FILE
+Try `ocaml-mdx test --help' or `ocaml-mdx --help' for more information.

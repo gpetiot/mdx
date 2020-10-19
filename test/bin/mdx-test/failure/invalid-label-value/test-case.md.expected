@@ -1,1 +1,6 @@
-[mdx] Fatal error: File "test-case.md", line 3: invalid code block: "bar" is not a valid value for label `non-deterministic`. Valid values are <none>, "command" and "output". Label `skip` does not allow a value.
+ocaml-mdx: FILE argument: File "test-case.md", line 3: invalid code block:
+           "bar" is not a valid value for label `non-deterministic`. Valid
+           values are <none>, "command" and "output". Label `skip` does not
+           allow a value.
+Usage: ocaml-mdx test [OPTION]... FILE
+Try `ocaml-mdx test --help' or `ocaml-mdx --help' for more information.
