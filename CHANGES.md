@@ -4,6 +4,7 @@
 
 - Allow to explicitly set the kind of blocks in labels: `ocaml`, `cram`, `toplevel` or `include`. (#237, @gpetiot)
 - Include blocks do not require an empty block anymore (#286, @gpetiot)
+- Display OCaml warnings in mdx-error blocks (#293, @gpetiot)
 
 #### Changed
 
