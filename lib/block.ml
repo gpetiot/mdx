@@ -78,7 +78,6 @@ type t = {
   loc : Location.t;
   section : section option;
   dir : string option;
-  required_packages : string list;
   labels : Label.t list;
   legacy_labels : bool;
   contents : string list;
@@ -214,8 +213,6 @@ let set_variables t = t.set_variables
 
 let unset_variables t = t.unset_variables
 
-let explicit_required_packages t = t.required_packages
-
 let require_re =
   let open Re in
   seq [ str "#require \""; group (rep1 any); str "\"" ]
@@ -235,10 +232,6 @@ let require_from_lines lines =
   let open Util.Result.Infix in
   Util.Result.List.map ~f:require_from_line lines >>| fun libs ->
   List.fold_left Library.Set.union Library.Set.empty libs
-
-let required_libraries = function
-  | { value = Toplevel _; contents; _ } -> require_from_lines contents
-  | _ -> Ok Library.Set.empty
 
 let value t = t.value
 
@@ -319,7 +312,6 @@ type block_config = {
   dir : string option;
   skip : bool;
   version : (Label.Relation.t * Ocaml_version.t) option;
-  required_packages : string list;
   set_variables : (string * string) list;
   unset_variables : string list;
   file_inc : string option;
@@ -339,10 +331,6 @@ let get_block_config l =
     dir = get_label (function Dir x -> Some x | _ -> None) l;
     skip = List.exists (function Label.Skip -> true | _ -> false) l;
     version = get_label (function Version (x, y) -> Some (x, y) | _ -> None) l;
-    required_packages =
-      List.filter_map
-        (function Label.Require_package x -> Some x | _ -> None)
-        l;
     set_variables =
       List.filter_map (function Label.Set (v, x) -> Some (v, x) | _ -> None) l;
     unset_variables =
@@ -445,7 +433,6 @@ let mk ~loc ~section ~labels ~legacy_labels ~header ~contents ~errors =
     loc;
     section;
     dir = config.dir;
-    required_packages = config.required_packages;
     labels;
     legacy_labels;
     contents;
