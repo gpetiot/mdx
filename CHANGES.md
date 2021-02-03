@@ -1,3 +1,19 @@
+### unreleased
+
+#### Added
+
+#### Changed
+
+- Format ocaml blocks with ocamlformat-rpc (#316, @gpetiot)
+
+#### Deprecated
+
+#### Removed
+
+#### Fixed
+
+#### Security
+
 ### 1.8.1
 
 #### Changed

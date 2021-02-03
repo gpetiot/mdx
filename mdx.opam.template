@@ -1,0 +1,3 @@
+pin-depends: [
+  "ocamlformat-rpc-lib.dev" "git+https://github.com/gpetiot/ocamlformat.git#rpc"
+]

@@ -33,8 +33,11 @@
   (re
    (>= 1.7.2))
   result
+  sexplib0
+  spawn
   (ocaml-version
    (>= 2.3.0))
+  ocamlformat-rpc-lib
   odoc
   (lwt :with-test)
   (alcotest :with-test)))
