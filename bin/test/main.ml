@@ -58,6 +58,7 @@ let report_error_in_block block msg =
 let run setup non_deterministic silent_eval record_backtrace syntax silent
     verbose_findlib prelude prelude_str file section root force_output output :
     int =
+  let return_code =
   try
     run_exn setup non_deterministic silent_eval record_backtrace syntax silent
       verbose_findlib prelude prelude_str file section root force_output output
@@ -68,6 +69,9 @@ let run setup non_deterministic silent_eval record_backtrace syntax silent
   | Mdx_test.Test_block_failure (block, msg) ->
       report_error_in_block block msg;
       1
+  in
+  Ocf_rpc.V1.halt () ;
+  return_code
 
 (**** Cmdliner ****)
 

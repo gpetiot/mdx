@@ -23,44 +23,35 @@ type process = {
 
 let running_process : process option ref = ref None
 
-let log = Printf.printf
-
 let negociate_version { input; output; _ } =
   let rec aux = function
     | [] -> Error "Version negociation failed"
     | latest :: others -> (
         let latest = V.to_string latest in
         let version = `Version latest in
-        log "[ocf] proposed version %s\n%!" latest;
         Csexp.to_channel output (Ocf.Init.to_sexp version);
         flush output;
         match Ocf.Init.read_input input with
         | `Version v when v = latest -> (
             match V.is_handled v with
             | Some v ->
-                log "[ocf] server accepted version %s\n%!" latest;
                 Ok v
             | None -> failwith "impossible")
         | `Version vstr -> (
-            log "Server proposed version: %s\n%!" vstr;
             match V.is_handled vstr with
             | Some v ->
-                log "Version %s is supported\n%!" vstr;
                 if List.mem v others then Ok v else aux others
             | None ->
-                log "Version %s is not supported\n%!" vstr;
                 aux others)
         | `Unknown ->
-            log "Server answered unknown\n%!";
             Error "Version negociation failed"
         | `Halt ->
-            log "Server did not answer with a version\n%!";
             Error "Version negociation failed")
   in
   aux V.supported_versions
 
 let start () =
-  let prog = "ocamlformat-rpc" in
+  let prog = "/home/gpe/ocamlformat-rpc.exe" in
   let argv = [ "ocamlformat-rpc" ] in
   let stdin, in_ = Unix.pipe () in
   let out_, stdout = Unix.pipe () in
@@ -95,11 +86,9 @@ module V1 = struct
   let query t =
     get_process () >>| fun p ->
     Ocf.V1.output p.output t;
-    log "Sent %s\n%!" (Ocf.V1.to_sexp t |> Sexp.to_string);
     Ocf.V1.read_input p.input
 
   let format x =
-    log "Format '%s'\n%!" x;
     match query (`Format (x, None)) with
     | Ok (`Format (x, _)) -> Ok x
     | Ok (`Error msg) -> Error msg
@@ -107,13 +96,17 @@ module V1 = struct
 
   let halt () =
     match get_process () with
+    | exception _ -> running_process := None
     | Ok p ->
       Ocf.V1.output p.output `Halt;
-      log "Sent %s\n%!" (Ocf.V1.to_sexp `Halt |> Sexp.to_string);
       close_in p.input;
       close_out p.output;
       running_process := None
-    | Error _ -> ()
+    | Error _ -> running_process := None
 
-  let try_format x = match format x with Ok x -> x | Error _ -> x
+  let try_format x =
+    match format x with
+    | exception _ -> x
+    | Ok x -> x
+    | Error _ -> x
 end
