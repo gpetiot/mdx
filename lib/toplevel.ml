@@ -81,7 +81,7 @@ let pp_command ppf (t : t) =
 
 let pp ppf (t : t) =
   pp_command ppf t;
-  pp_lines (Output.pp ~pad:t.vpad) ppf t.output
+  pp_lines (Output.pp ~pad:t.hpad) ppf t.output
 
 let lexbuf ~(pos : Lexing.position) s =
   let lexbuf = Lexing.from_string s in
