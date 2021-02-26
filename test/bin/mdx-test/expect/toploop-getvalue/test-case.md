@@ -7,7 +7,12 @@ module Test = String
 ```
 
 ```ocaml
-# include struct module M = struct type t end end;;
+# include struct
+    module M = struct
+      type t
+    end
+  end
+  ;;
 module M : sig type t end
 ```
 

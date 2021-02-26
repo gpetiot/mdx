@@ -11,17 +11,18 @@ let x =
 
 ```ocaml
 
-# let x = 1
+# let x = 1 in
 
-  in x
+  x
+  ;;
 - : int = 1
 
 
-# 3
+# 3;;
 - : int = 3
 
 
-# Printf.printf "foo\n\nbar\n"
+# Printf.printf "foo\n\nbar\n";;
 foo
 
 bar

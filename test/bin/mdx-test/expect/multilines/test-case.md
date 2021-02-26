@@ -20,18 +20,12 @@ let rec fact = function
 And it should work fine for toplevel too:
 
 ```ocaml
-# let rec fact = function
-  | 1 -> 1
-  | n -> n * fact (n-1)
-  ;;
+# let rec fact = function 1 -> 1 | n -> n * fact (n - 1);;
 val fact : int -> int = <fun>
 ```
 
 ```ocaml
-# print_string "foo \
-  \" \
-  toto\
-  \ bar\""
+# print_string "foo \" toto bar\"";;
 foo " toto bar"
 - : unit = ()
 ```
