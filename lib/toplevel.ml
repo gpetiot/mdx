@@ -54,21 +54,8 @@ let pp_vpad ppf t =
 let pp_command ppf (t : t) =
   match t.command with
   | [] -> ()
-  | l -> (
-      let l =
-        String.concat ~sep:"\n" l
-        |> Ocf_rpc.V1.try_format
-        |> fun x ->
-        ( match String.cut ~sep:"\n" x with
-          | Some (";;", x) -> x
-          | _ -> x )
-        |> fun x ->
-        ( match List.rev (String.cuts ~sep:"\n" ~empty:true x) with
-          | [""; x1] -> [x1 ^ ";;"]
-          | "" :: r -> List.rev (";;" :: r)
-          | x :: r -> (x ^ ";;") :: r
-          | [] -> failwith "command are not empty" )
-      in
+  | l ->
+      let l = Ocf_rpc.V1.try_format_as_list l in
       pp_vpad ppf t;
       List.iteri
         (fun i s ->
@@ -77,7 +64,7 @@ let pp_command ppf (t : t) =
             match s with
             | "" -> Fmt.string ppf "\n"
             | _ -> Fmt.pf ppf "%a  %s\n" pp_pad t.hpad s)
-        l )
+        l
 
 let pp ppf (t : t) =
   pp_command ppf t;
