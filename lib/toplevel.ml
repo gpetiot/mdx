@@ -55,7 +55,7 @@ let pp_command ppf (t : t) =
   match t.command with
   | [] -> ()
   | l ->
-      let l = Ocf_rpc.V1.try_format_as_list l in
+      let l = Ocf_rpc.V1.try_format_as_list ~toplevel:true l in
       pp_vpad ppf t;
       List.iteri
         (fun i s ->

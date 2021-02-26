@@ -102,13 +102,13 @@ module V1 = struct
     | Ok _ -> Error "Unknown error"
     | Error msg -> Error msg
 
-  let try_format_as_list l =
+  let try_format_as_list ?(toplevel = false) l =
     Astring.String.concat ~sep:"\n" l
     |> fun x ->
     ( match format x with
     | exception _ -> l
     | Error _ -> l
-    | Ok fmted -> (
+    | Ok fmted when toplevel -> (
         match Astring.String.cut ~sep:"\n" fmted with
         | Some (";;", x) -> x
         | _ -> fmted )
@@ -117,7 +117,8 @@ module V1 = struct
           | [""; x1] -> [x1 ^ ";;"]
           | "" :: r -> List.rev (";;" :: r)
           | x :: r -> (x ^ ";;") :: r
-          | [] -> failwith "command are not empty" ) )
+          | [] -> failwith "command are not empty" )
+    | Ok fmted -> Astring.String.cuts ~sep:"\n" ~empty:true fmted )
 
   let halt () =
     match get_process () with
