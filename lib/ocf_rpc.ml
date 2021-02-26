@@ -88,11 +88,19 @@ module V1 = struct
     Ocf.V1.output p.output t;
     Ocf.V1.read_input p.input
 
-  let format x =
-    match query (`Format (x, None)) with
-    | Ok (`Format (x, _)) -> Ok x
+  let config c =
+    match query (`Config c) with
+    | Ok (`Config _) -> Ok ()
     | Ok (`Error msg) -> Error msg
-    | _ -> Error "Unknown error"
+    | Ok _ -> Error "Unknown error"
+    | Error msg -> Error msg
+
+  let format x =
+    match query (`Format x) with
+    | Ok (`Format x) -> Ok x
+    | Ok (`Error msg) -> Error msg
+    | Ok _ -> Error "Unknown error"
+    | Error msg -> Error msg
 
   let halt () =
     match get_process () with
@@ -103,6 +111,11 @@ module V1 = struct
       close_out p.output;
       running_process := None
     | Error _ -> running_process := None
+
+  let try_config c =
+    match config c with
+    | exception _ -> ()
+    | _ -> ()
 
   let try_format x =
     match format x with
