@@ -138,21 +138,26 @@ let lstrip string =
   Astring.String.with_index_range string ~first:hpad
 
 let pp_contents ?syntax ppf t =
+  let pp_aux syntax contents =
+    match (syntax, contents) with
+    | Some Syntax.Mli, [ _ ] -> Fmt.pf ppf "%s" (String.concat "\n" contents)
+    | Some Syntax.Mli, _ ->
+        Fmt.pf ppf "\n%a" (pp_lines syntax t) (List.map lstrip contents)
+    | (Some Cram | Some Normal | None), [] -> ()
+    | (Some Cram | Some Normal | None), _ ->
+        Fmt.pf ppf "%a\n" (pp_lines syntax t) contents
+  in
   match t.value with
   | Toplevel _ ->
-    let syntax' = Util.Option.value syntax ~default:Syntax.Normal in
-    let tests = Toplevel.of_lines ~syntax:syntax' ~loc:t.loc t.contents in
-    List.iter (fun (cmd : Toplevel.t) ->
-        Fmt.pf ppf "%a" Toplevel.pp cmd
-      ) tests
-  | _ -> (
-  match (syntax, t.contents) with
-  | Some Syntax.Mli, [ _ ] -> Fmt.pf ppf "%s" (String.concat "\n" t.contents)
-  | Some Syntax.Mli, _ ->
-      Fmt.pf ppf "\n%a" (pp_lines syntax t) (List.map lstrip t.contents)
-  | (Some Cram | Some Normal | None), [] -> ()
-  | (Some Cram | Some Normal | None), _ ->
-      Fmt.pf ppf "%a\n" (pp_lines syntax t) t.contents )
+      let syntax' = Util.Option.value syntax ~default:Syntax.Normal in
+      let tests = Toplevel.of_lines ~syntax:syntax' ~loc:t.loc t.contents in
+      List.iter
+        (fun (cmd : Toplevel.t) -> Fmt.pf ppf "%a" Toplevel.pp cmd)
+        tests
+  | OCaml _ ->
+      let contents = Ocf_rpc.V1.try_format_as_list ~toplevel:false t.contents in
+      pp_aux syntax contents
+  | Cram _ | Include _ | Raw _ -> pp_aux syntax t.contents
 
 let pp_errors ppf t =
   match t.value with
