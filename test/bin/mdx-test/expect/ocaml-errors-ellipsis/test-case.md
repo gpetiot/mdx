@@ -12,8 +12,9 @@ Error: Syntax error: 'end' expected
 ```
 
 ```ocaml
-module Counter: Irmin.Contents.S with type t = int64 = struct
+module Counter : Irmin.Contents.S with type t = int64 = struct
   type t = int64
+
   let t = Irmin.Type.int64
 end
 ```

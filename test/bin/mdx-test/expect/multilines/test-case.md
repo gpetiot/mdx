@@ -12,9 +12,7 @@ $ for i in `seq 1 10`; do \
 This works trivially for normal OCaml fragments:
 
 ```ocaml
-let rec fact = function
-| 1 -> 1
-| n -> n * fact (n-1)
+let rec fact = function 1 -> 1 | n -> n * fact (n - 1)
 ```
 
 And it should work fine for toplevel too:

@@ -1,12 +1,7 @@
 Mdx test should preserve empty lines in code blocks
 
 ```ocaml
-
-
-let x =
-
-  5
-
+let x = 5
 ```
 
 ```ocaml

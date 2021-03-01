@@ -7,7 +7,11 @@ let x = 1;;
 ```
 
 ```ocaml env=e1
-module M = struct let k = 42 let f x = x * k end;;
+module M = struct
+  let k = 42
+
+  let f x = x * k
+end;;
 ```
 
 `x` holds the value `3` in the environment `e2`.

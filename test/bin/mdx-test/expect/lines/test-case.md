@@ -1,9 +1,7 @@
 Testing lines directives
 
 ```ocaml
-let f x =
-  x+x
-  +x
+let f x = x + x + x
 ```
 
 And
