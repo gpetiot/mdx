@@ -109,7 +109,6 @@ module V1 = struct
       | Error _ -> l
       | Ok fmted -> (
           match List.rev (split_lines (chop_semisemi fmted)) with
-          | [ ""; x1 ] -> [ x1 ^ ";;" ]
           | "" :: x :: r | x :: r -> List.rev ((x ^ ";;") :: r)
           | [] -> failwith "command are not empty")
     else
@@ -120,8 +119,7 @@ module V1 = struct
           | exception _ -> l
           | Error _ -> l
           | Ok fmted -> (
-              match List.rev (split_lines (chop_semisemi fmted)) with
-              | [ ""; x1 ] -> [ x1 ]
+              match List.rev (split_lines fmted) with
               | "" :: r -> List.rev r
               | x :: r -> List.rev (x :: r)
               | [] -> failwith "command are not empty"))
