@@ -110,7 +110,7 @@ module V1 = struct
       | Ok fmted -> (
           match List.rev (split_lines (chop_semisemi fmted)) with
           | [ ""; x1 ] -> [ x1 ^ ";;" ]
-          | x :: r -> List.rev ((x ^ ";;") :: r)
+          | "" :: x :: r | x :: r -> List.rev ((x ^ ";;") :: r)
           | [] -> failwith "command are not empty")
     else
       match Astring.String.cuts ~sep:";;" whole with

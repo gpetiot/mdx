@@ -8,8 +8,7 @@ let x = 5
 
 # let x = 1 in
 
-  x
-  ;;
+  x;;
 - : int = 1
 
 

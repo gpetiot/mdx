@@ -16,8 +16,7 @@ $ echo $RANDOM
 
 ```ocaml non-deterministic=output
 # Random.self_init ();
-  Random.int 42
-  ;;
+  Random.int 42;;
 0
 ```
 

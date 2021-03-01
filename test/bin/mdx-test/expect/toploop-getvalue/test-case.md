@@ -11,8 +11,7 @@ module Test = String
     module M = struct
       type t
     end
-  end
-  ;;
+  end;;
 module M : sig type t end
 ```
 

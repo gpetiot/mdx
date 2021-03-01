@@ -12,8 +12,7 @@ $ for i in `seq 1 10`; do echo $i; done
 ```ocaml
 # for i = 1 to 10 do
     Printf.printf "%d\n%!" i
-  done
-  ;;
+  done;;
 1
 2
 ...
