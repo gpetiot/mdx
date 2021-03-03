@@ -137,7 +137,7 @@ let lstrip string =
   let hpad = Misc.hpad_of_lines [ string ] in
   Astring.String.with_index_range string ~first:hpad
 
-let pp_contents ?syntax ppf t =
+let pp_contents ?syntax ?(format_code = false) ppf t =
   let pp_aux syntax contents =
     match (syntax, contents) with
     | Some Syntax.Mli, [ _ ] -> Fmt.pf ppf "%s" (String.concat "\n" contents)
@@ -148,16 +148,17 @@ let pp_contents ?syntax ppf t =
         Fmt.pf ppf "%a\n" (pp_lines syntax t) contents
   in
   match t.value with
-  | Toplevel _ ->
+  | Toplevel _ when format_code ->
       let syntax' = Util.Option.value syntax ~default:Syntax.Normal in
       let tests = Toplevel.of_lines ~syntax:syntax' ~loc:t.loc t.contents in
       List.iter
-        (fun (cmd : Toplevel.t) -> Fmt.pf ppf "%a" Toplevel.pp cmd)
+        (fun (cmd : Toplevel.t) ->
+          Fmt.pf ppf "%a" (Toplevel.pp ~format_code) cmd)
         tests
-  | OCaml _ ->
+  | OCaml _ when format_code ->
       let contents = Ocf_rpc.try_format_as_list ~toplevel:false t.contents in
       pp_aux syntax contents
-  | Cram _ | Include _ | Raw _ -> pp_aux syntax t.contents
+  | _ -> pp_aux syntax t.contents
 
 let pp_errors ppf t =
   match t.value with
@@ -204,9 +205,9 @@ let pp_header ?syntax ppf t =
           Fmt.(option Header.pp)
           (header t)
 
-let pp ?syntax ppf b =
+let pp ?syntax ?format_code ppf b =
   pp_header ?syntax ppf b;
-  pp_contents ?syntax ppf b;
+  pp_contents ?syntax ?format_code ppf b;
   pp_footer ?syntax ppf b;
   pp_errors ppf b
 
