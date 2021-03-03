@@ -71,7 +71,7 @@ let run setup non_deterministic silent_eval record_backtrace syntax silent
         report_error_in_block block msg;
         1
   in
-  Ocf_rpc.V1.halt ();
+  Ocf_rpc.halt ();
   return_code
 
 (**** Cmdliner ****)

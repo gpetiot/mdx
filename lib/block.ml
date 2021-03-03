@@ -155,7 +155,7 @@ let pp_contents ?syntax ppf t =
         (fun (cmd : Toplevel.t) -> Fmt.pf ppf "%a" Toplevel.pp cmd)
         tests
   | OCaml _ ->
-      let contents = Ocf_rpc.V1.try_format_as_list ~toplevel:false t.contents in
+      let contents = Ocf_rpc.try_format_as_list ~toplevel:false t.contents in
       pp_aux syntax contents
   | Cram _ | Include _ | Raw _ -> pp_aux syntax t.contents
 
