@@ -50,8 +50,6 @@ module Client = struct
   module type S = sig
     val try_config : (string * string) list -> unit
 
-    val try_format : string -> string
-
     val try_format_as_list : ?toplevel:bool -> string list -> string list
 
     val halt : unit -> unit
@@ -135,9 +133,6 @@ module Client = struct
       | Error _ -> running_process := None
 
     let try_config c = match config c with exception _ -> () | _ -> ()
-
-    let try_format x =
-      match format x with exception _ -> x | Ok x -> x | Error _ -> x
   end
 end
 
@@ -153,11 +148,6 @@ let try_config x =
   match get_client () with
   | exception _ -> ()
   | (module Impl) -> Impl.try_config x
-
-let try_format x =
-  match get_client () with
-  | exception _ -> x
-  | (module Impl) -> Impl.try_format x
 
 let try_format_as_list ?toplevel x =
   match get_client () with
